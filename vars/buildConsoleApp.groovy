@@ -96,10 +96,21 @@ def call(body){
                     // bat "set"
                 }
             }
+
+            stage('Build C#') {
+                steps {
+                    // restore Nuget packages
+                    bat "${env.NugetTool} restore ${MainSolutionPath} ${env.NugetSources}"
+
+                    // build
+                    bat "${env.MSBuildTool} ${MainSolutionPath} ${SolutionBuildString} /t:Restore /p:RestoreSources=\"${env.NugetSources_MSBuild}\""
+        			bat "${env.MSBuildTool} ${MainSolutionPath} ${SolutionBuildString}"
+                }
+            }
     	}
 
         post {
-        	
+
             failure {
                 script {
                     def emailTo = ""
