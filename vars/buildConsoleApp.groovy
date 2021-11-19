@@ -98,8 +98,30 @@ def call(body){
             }
     	}
 
-    	post {
-    		echo "We DID IT!"
-    	}
+        post {
+        	
+            failure {
+                script {
+                    def emailTo = ""
+
+                    if (BranchName == 'master' || BranchName == 'develop') {
+                        emailTo = params.ProjectLeadUsername
+                    }
+
+                    emailext (
+                        to: emailTo,
+                        subject: "${env.JOB_NAME} - Build #${env.BUILD_NUMBER} - FAILED",
+                        recipientProviders: [
+                            [$class: 'CulpritsRecipientProvider'],
+                            [$class: 'RequesterRecipientProvider']
+                        ],
+                        attachLog: true,
+                        body: """
+                            Check console output at ${env.BUILD_URL}console to view the results.
+                        """
+                    )
+                }
+            }
+        }
     }
 }
