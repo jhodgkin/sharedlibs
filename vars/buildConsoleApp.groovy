@@ -74,18 +74,18 @@ def call(body){
                             MainProjectPath = params.MainProjectPath
                         }
 
-                        versionNumberOutput = bat (
-                            script: "${env.BuildScriptsFolder}AssemblyVersionGet.bat ${MainProjectFolder}",
-                            returnStdout: true
-                        ).trim()
+                        // versionNumberOutput = bat (
+                        //     script: "${env.BuildScriptsFolder}AssemblyVersionGet.bat ${MainProjectFolder}",
+                        //     returnStdout: true
+                        // ).trim()
 
-                        try{
-                            versionNumber = versionNumberOutput.split()[-1]
-                        }
-                        catch(Exception ex){
+                        // try{
+                        //     versionNumber = versionNumberOutput.split()[-1]
+                        // }
+                        // catch(Exception ex){
                             
-                        }
-                        echo "Version Number: ${versionNumber}"
+                        // }
+                        // echo "Version Number: ${versionNumber}"
                     }
 
                     echo "BranchName: ${BranchName}"
