@@ -107,6 +107,64 @@ def call(body){
         			bat "${env.MSBuildTool} ${MainSolutionPath} ${SolutionBuildString}"
                 }
             }
+
+   			// stage('QC Config') {
+      //           steps {
+      //               script {
+      //               File file = new File("${MainProjectFolder}\\bin\\${BuildConfig}\\AppSettings.xml")
+      //               if(file.exists()) {
+						//     echo "Checking Config ${MainProjectFolder}"
+						//     echo bat (
+      //                           script: "python C:\\buildscripts\\Jenkins\\billingServicesConsoleAppConfigQc.py \"${MainProjectFolder}\\bin\\${BuildConfig}\\AppSettings.xml\" ${params.MainProjectName} ${BranchName}",
+      //                           returnStdout: true
+      //                       )
+      //                   }
+      //               else{
+      //                   echo "Could not find AppSettings file"
+      //                   }
+      //               }
+      //           }
+      //       }
+
+            stage('Test C#') {
+                steps {
+                    script {
+                        for(LinkedHashMap test: params.UnitTests) {
+                            if (!test.containsKey("args")) {
+                                test.args = ""
+                            }
+
+                            def testCaseFilterArg = "(${TestCategoryFilter})"
+                            if (test.containsKey("testCaseFilter")) {
+                                testCaseFilterArg = testCaseFilterArg + "&(${test.testCaseFilter})"
+                            }
+
+                            echo bat (
+                                script: "${env.MSTestTool} \"${env.WORKSPACE}\\${test.testProjectPath}\\bin\\${BuildConfig}\\${test.testDllPath}\" /Logger:console;verbosity=normal /TestCaseFilter:\"${testCaseFilterArg}\" ${test.args}",
+                                returnStdout: true
+                            )
+                        }
+
+                        for(LinkedHashMap test: params.IntegrationTests) {
+                            if (!test.containsKey("args")) {
+                                test.args = ""
+                            }
+
+                            def testCaseFilterArg = "(${TestCategoryFilter})"
+                            if (test.containsKey("testCaseFilter")) {
+                                testCaseFilterArg = testCaseFilterArg + "&(${test.testCaseFilter})"
+                            }
+
+                            echo bat (
+                                script: "${env.MSTestTool} \"${env.WORKSPACE}\\${test.testProjectPath}\\bin\\${BuildConfig}\\${test.testDllPath}\" /Logger:console;verbosity=normal /TestCaseFilter:\"${testCaseFilterArg}\" ${test.args}",
+                                returnStdout: true
+                            )
+                        }
+                    }
+                }
+            }
+
+
     	}
 
         // post {
