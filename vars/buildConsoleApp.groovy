@@ -241,9 +241,9 @@ def call(body){
             }
 
             stage('Deploy'){
-                when {
-                    branch "origin/main"
-                }
+//                when {
+//                    branch "origin/main"
+//                }
                 steps{
                     script {
 						File deployPython = new File("deploy.py")
