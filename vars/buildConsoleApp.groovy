@@ -78,9 +78,14 @@ def call(body){
         agent any
 
         stages {
-			stage ('Env Variables'){
+			stage("Env Variables") {
 				steps {
-					bat "printenv"
+					script {
+						env.LS = sh(script:'ls -lah', returnStdout: true).trim()
+						echo "LS = ${env.LS}"
+						// or if you access env variable in the shell command
+						sh 'echo $LS'
+					}
 				}
 			}
             stage ('Init') {
