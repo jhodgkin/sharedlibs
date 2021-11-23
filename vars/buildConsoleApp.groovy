@@ -235,7 +235,7 @@ def call(body){
 
             stage('Deploy'){
                 when {
-                    expression { env.BRANCH_NAME ==~ /master|main/ }
+                    branch 'main'
                 }
                 steps{
                     script {
