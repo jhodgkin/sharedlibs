@@ -80,6 +80,7 @@ def call(body){
         stages {
             stage ('Init') {
                 steps {
+					sh "printenv"
                     script {
                         BranchName = env.BRANCH_NAME
 
