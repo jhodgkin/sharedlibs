@@ -235,7 +235,7 @@ def call(body){
 
             stage('Deploy'){
                 when {
-                    BranchName "main"
+                    branch "main"
                 }
                 steps{
                     script {
