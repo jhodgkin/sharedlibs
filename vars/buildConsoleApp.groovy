@@ -245,10 +245,10 @@ def call(body){
 								script: "python \"deploy.py\" \"${env.WORKSPACE}\" \"${params.MainProjectName}\" ${BuildConfig}",
 								returnStdout: true
 							)
-						)else(
+						}else{
 							echo "Could not find a deploy.(py,groovy,sh) file."
 							returnStdout: failure
-						)
+						}
                     }
                 }
             }
