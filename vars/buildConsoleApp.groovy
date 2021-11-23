@@ -80,7 +80,7 @@ def call(body){
         stages {
 			stage ('Env Variables'){
 				steps {
-					sh "printenv"
+					bat "printenv"
 				}
 			}
             stage ('Init') {
