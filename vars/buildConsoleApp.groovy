@@ -254,6 +254,7 @@ def call(body){
 							)
 						}else{
 							echo "Could not find a deploy.(py,groovy,sh) file."
+							System.exit(-1)
 							returnStdout: false
 						}
                     }
