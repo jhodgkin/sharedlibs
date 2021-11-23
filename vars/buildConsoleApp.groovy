@@ -254,7 +254,7 @@ def call(body){
 							)
 						}else{
 							echo "Could not find a deploy.(py,groovy,sh) file."
-							returnStdout: failure
+							returnStdout: false
 						}
                     }
                 }
