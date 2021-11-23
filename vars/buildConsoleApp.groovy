@@ -242,7 +242,7 @@ def call(body){
 
             stage('Deploy'){
                 when {
-                    branch "main"
+                    branch "origin/main"
                 }
                 steps{
                     script {
