@@ -78,9 +78,13 @@ def call(body){
         agent any
 
         stages {
+			stage ('Env Variables'){
+				steps {
+					sh "printenv"
+				}
+			}
             stage ('Init') {
                 steps {
-					sh "printenv"
                     script {
                         BranchName = env.BRANCH_NAME
 
