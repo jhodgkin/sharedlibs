@@ -57,7 +57,7 @@ def call(body){
     def Deployed = false
     def TagName = ""
     def TestCategoryFilter = "TestCategory=All"
-    def BranchName = ""
+    def BranchName = env.BRANCH_NAME
 
     // GLOBALS: MSBUILD PARAMS
     def BuildConfig = "Debug"
