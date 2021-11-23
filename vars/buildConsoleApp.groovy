@@ -57,7 +57,7 @@ def call(body){
     def Deployed = false
     def TagName = ""
     def TestCategoryFilter = "TestCategory=All"
-    def BranchName = env.GIT_BRANCH
+    def BranchName = ""
 
     // GLOBALS: MSBUILD PARAMS
     def BuildConfig = "Debug"
@@ -88,7 +88,7 @@ def call(body){
             stage ('Init') {
                 steps {
                     script {
-                        BranchName = env.BRANCH_NAME
+                        BranchName = env.GIT_BRANCH
 
                         if (BranchName == "master" || BranchName == "main") {
                             BuildConfig = "Release"
