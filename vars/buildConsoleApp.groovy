@@ -1,4 +1,40 @@
-
+// EXPECTED CONFIGURATION
+// buildSynergyConsoleApp {
+//     SolutionName = "ABBYYBridge"
+//     MainProjectName = "ABBYYBridgeServiceWinform"
+//     ProjectLeadUsername = "aarondavis"
+//     GitRepoName = "ABBYYBridge"
+//     SourceControlCredentialId = "0adde854-3187-47bc-b9c2-9ef921ae07a7"
+//     Deploy = "true"
+//     UnitTests = [
+//         [
+//             testProjectPath: "LaunchCL.Unit.Tests",
+//             testDllPath: "LaunchCL.Unit.Tests.dll"
+//         ]
+//     ]
+//     IntegrationTests = [
+//          [
+//              testProjectPath: "LaunchRulesEngine.Integration.Tests",
+//              testDllPath: "LaunchRulesEngine.Integration.Tests.dll"
+//          ]
+//     ]
+//     RegressionTests = [
+//         [
+//             testProjectPath: "Launch.Web.Selenium.Tests",
+//             testDllPath: "Launch.Web.Selenium.Tests.dll",
+//             runSettingsPath: "Launch.Web.Selenium.Tests\\Launch.Web.Selenium.Tests.runsettings",
+//             // for running selective unit tests, see:
+//             //		https://docs.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests
+//             // for vstest.console.exe args, see:
+//             //		https://docs.microsoft.com/en-us/visualstudio/test/vstest-console-options?view=vs-2017
+//             // for vstest.console.exe TestCaseFilter docs, see:
+//             //		https://github.com/Microsoft/vstest-docs/blob/master/docs/filter.md
+//             // NOTE: example, but no longer needed
+//             // testCaseFilter: "ClassName!=Launch.Web.Selenium.Tests.Tests.SillyTests",
+//             args: ""
+//         ]
+//     ]
+// }
 
 def call(body){
 	def params = [:]
@@ -164,7 +200,58 @@ def call(body){
                 }
             }
 
+            stage('Tag Release') {
+                when {
+                    branch 'master'
+                }
+                steps {
+                    script {
+                        // https://github.com/jenkinsci/pipeline-examples/blob/master/pipeline-examples/push-git-repo/pushGitRepo.groovy
+                        withCredentials([usernamePassword(credentialsId: params.SourceControlCredentialId, passwordVariable: 'GitPassword', usernameVariable: 'GitUsername')]) {
+                            // https://www.atlassian.com/git/tutorials/inspecting-a-repository/git-tag
+                            TagName = "${params.ProjectName}_${env.BUILD_NUMBER}"
 
+                            echo "TagName: ${TagName}"
+
+                            // workaround; see: https://confluence.atlassian.com/bitbucketserverkb/ssl-certificate-problem-unable-to-get-local-issuer-certificate-816521128.html
+                            echo bat (
+                                script: "git config --global http.sslVerify false",
+                                returnStdout: true
+                            )
+
+                            echo bat (
+                                script: "git tag ${TagName} -m \"automated build #${env.BUILD_NUMBER} of ${params.DeploySiteName}\"",
+                                returnStdout: true
+                            )
+
+                            echo bat (
+                                script: "git push https://${GitUsername}:${GitPassword}@git.conservice.com/BillingServices/ConsoleApps/${params.GitRepoName}.git ${TagName}",
+                                returnStdout: true
+                            )
+                        }
+                    }
+                }
+            }
+
+            stage('Deploy'){
+                when {
+                    branch 'master'
+                }
+                steps{
+                    script {
+						File deployPython = new File("deploy.py")
+						if(deployPython.exists()) {
+							echo bat (
+								script: "python \"deploy.py\" \"${env.WORKSPACE}\" \"${params.MainProjectName}\" ${BuildConfig}",
+								returnStdout: true
+							)
+						)else(
+							echo "Could not find a deploy.(py,groovy,sh) file."
+							returnStdout: failure
+						)
+                    }
+                }
+            }
     	}
 
         // post {
