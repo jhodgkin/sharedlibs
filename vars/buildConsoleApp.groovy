@@ -253,9 +253,7 @@ def call(body){
 								returnStdout: true
 							)
 						}else{
-							echo "Could not find a deploy.(py,groovy,sh) file."
-							System.exit(-1)
-							returnStdout: false
+							error("Could not find a deploy.(py,groovy,sh) file.")
 						}
                     }
                 }
